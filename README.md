@@ -2,7 +2,7 @@
 
 Just a simple Azure Function that runs daily, grabbing the up-to-date bin collection schedule for a specific address useing the scambs.gov.uk waste calendar API; then sends you slack messages to reminder you the day before and the morning of.
 
-By default the function will run at [8am daily](#functionjson), and if there is a bin collection the next day it will send you a reminder message imediately and schedule messages to remind you at 8:30pm that evening, and against at 7:30am the next day. Behaviour can be customised using [Application Settings](#application-settings).
+By [default](#functionjson) the function will run at 8am daily, and if there is a bin collection that day or the next day it will send you a reminder in slack and/or by SMS depending on [configured senders](#messagesendingintegrations)
 
 The messages are simple and only contain which bin(s) to put out i.e. `Blue & Green bin day tomorrow`
 
@@ -67,14 +67,16 @@ When running locally these are the application settings you need in `local.setti
   "Values": {
       "AzureWebJobsStorage": "UseDevelopmentStorage=true",
       "FUNCTIONS_WORKER_RUNTIME": "python",
-      "ApiBaseUrl": "https://servicelayer3c.azure-api.net/wastecalendar",
-      "Postcode": "<YOUR_POSTCODE>",
-      "HouseNumber": <YOUR_HOUSENUMBER>,
-      "ImmediateReminder": "<SEND_REMINDER_WHEN_FUNCTION_RUNS>",
-      "DayBeforeReminderTime": "<TIME_TO_SEND_REMINDER_THE_DAY_BEFORE_COLLECTION>",
-      "DayofReminderTime": "<TIME_TO_SEND_REMINDER_THE_DAY_OF_COLLECTION>",
-      "SLACK_ACCESS_TOKEN": "<YOUR_SLACK_ACCESS_TOKEN>",
-      "SLACK_USER_ID": "<YOUR_SLACK_USER_ID_TO_SEND_TO>"
+      "waste_api_url": "https://servicelayer3c.azure-api.net/wastecalendar",
+      "postcode": "<YOUR_POSTCODE>",
+      "house_number": <YOUR_HOUSENUMBER>,
+      "timezone": "<YOUR_TIMEZONE>", // e.g. "Europe/London"
+      "slack_access_token": "<YOUR_SLACK_ACCESS_TOKEN>",
+      "slack_recipients": "<YOUR_SLACK_USER_ID_TO_SEND_TO>", //csv list
+      "twilio_account_sid": "<YOUR_TWILIO_ACCOUNT_SID>",
+      "twilio_auth_token": "<YOUR_TWILIO_AUTH_TOKEN>",
+      "twilio_messageing_service_sid": "<YOUR_TWILIO_MESSAGEING_SERVICE_SID>",
+      "twilio_recipients": "<YOUR_MOBILE_NUMBER_WITH_COUNTRY_CODE>", //csv list
     }
 }
 ```
@@ -86,35 +88,21 @@ These Application Settings need to be configured when you deploy the Function
 
 These settings are used to call the Waste Calendar API used by South Cambridge Council
 
-#### **ApiBaseUrl**
+#### **waste_api_url**
 URL of Waste Calendar API e.g. https://servicelayer3c.azure-api.net/wastecalendar
 
-#### **Postcode**
+#### **postcode**
 Postcode of the property you want to get waste collection dates for. NOTE: Exclude the space e.g. SW1A 2AA becomes `"SW1A2AA"`
 
-#### **HouseNumber**
+#### **house_number**
 House number of the property you want to get waste collection dates for
 
+#### **timezone**
+TBC
 
-## Reminder Preference Settings
+## Message Sending Integrations 
 
-### **ImmediateReminder**
-Optional - Defaults to True
-
-By default the function will run at **8am every day**;
-If `ImmediateReminder` is set to `"True"` a reminder message will be sent when the function runs if a collection is the following day.
-This is in addition to the scheduled message that evening and the next morning.
-
-#### **DayBeforeReminderTime**
-Optional - Defaults to 20:30
-Time of day to schedule reminder the day before collection e.g. `"20:30"`
-
-#### **DayofReminderTime**
-Optional - Defaults to 07:30
-Time of day to schedule reminder the day before collection e.g. `"07:30"`
-
-
-## Slack Config Settings
+### Slack Config Settings
 
 #### **SLACK_ACCESS_TOKEN**
 Access token for your slack workspace, see [Access Tokens](#access-tokens) below 
@@ -122,8 +110,19 @@ Access token for your slack workspace, see [Access Tokens](#access-tokens) below
 #### **SLACK_USER_ID**
 Slack User ID of the user you want to send the reminder messages to, see [User ID](#user-id) below
 
+### Twilio Config Settings
 
+#### **TWILIO_ACCOUNT_SID**
+TBC
 
+#### **TWILIO_AUTH_TOKEN**
+TBC
+
+#### **TWILIO_MESSAGEING_SERVICE_SID**
+TBC
+
+#### **TWILIO_RECIPIENTS**
+TBC
 
 ***
 
@@ -171,3 +170,16 @@ Scopes can be configured on the OAuth & Permissions, accessible from the Feature
 ## User ID
 
 An individual's user ID can be found by clicking the `... More` button in a member's profile, then choosing `Copy member ID`.
+
+
+# Twilio Config
+
+TBC
+
+## Account SID
+
+## Auth Token
+
+## Messageing Service
+
+## Valid Recipients

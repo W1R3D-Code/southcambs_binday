@@ -4,5 +4,9 @@
 
 azure-functions
 python-dateutil
+pytz
 requests
 slack_sdk
+twilio
+typing
+varname
